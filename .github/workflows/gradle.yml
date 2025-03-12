@@ -38,7 +38,7 @@ jobs:
       run: chmod +x gradlew
     - name: Build
       run: |
-        ./gradlew cleanBuild --no-daemon --stacktrace
+        ./gradlew cleanBuild build uploadFiles --no-daemon --stacktrace
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:

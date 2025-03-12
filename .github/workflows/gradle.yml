@@ -38,9 +38,9 @@ jobs:
       run: chmod +x gradlew
     - name: Build
       run: |
-        ./gradlew cleanBuild build collect --no-daemon --stacktrace
+        ./gradlew clean build --no-daemon --stacktrace
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: Arclight 
+        name: ChoEazyTab 
         path: ./build/libs/*.jar

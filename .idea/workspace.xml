@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3090b74f-6244-4547-8259-7ca7bd04312b" name="Changes" comment="">
-      <change beforePath="D:/ChoEazyTab/.idea/gradle.xml" beforeDir="false" afterPath="D:/ChoEazyTab/.idea/gradle.xml" afterDir="false" />
+    <list default="true" id="3090b74f-6244-4547-8259-7ca7bd04312b" name="Changes" comment="added listener">
       <change beforePath="D:/ChoEazyTab/.idea/workspace.xml" beforeDir="false" afterPath="D:/ChoEazyTab/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="D:/ChoEazyTab/build.gradle.kts" beforeDir="false" afterPath="D:/ChoEazyTab/build.gradle.kts" afterDir="false" />
       <change beforePath="D:/ChoEazyTab/src/main/java/com/veroud/ChoEazyTab/ChoEazyTab.java" beforeDir="false" afterPath="D:/ChoEazyTab/src/main/java/com/veroud/ChoEazyTab/ChoEazyTab.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -69,6 +67,19 @@
       <option name="presentableId" value="Default" />
       <updated>1741777232486</updated>
     </task>
+    <task id="LOCAL-00001" summary="added listener">
+      <option name="closed" value="true" />
+      <created>1741778311274</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1741778311274</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="added listener" />
+    <option name="LAST_COMMIT_MESSAGE" value="added listener" />
   </component>
 </project>

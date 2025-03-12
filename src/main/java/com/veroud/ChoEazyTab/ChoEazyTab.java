@@ -1,24 +1,32 @@
 package com.veroud.ChoEazyTab;
 
 import com.google.inject.Inject;
-import com.velocitypowered.api.event.PostOrder;
 import com.velocitypowered.api.event.Subscribe;
-import com.velocitypowered.api.event.player.PlayerChatEvent;
-import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.event.connection.PostLoginEvent;
+import com.velocitypowered.api.event.connection.DisconnectEvent;
+import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.proxy.player.TabListEntry;
+import net.kyori.adventure.text.Component;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @Plugin(id = "choeazytab", name = "ChoEazyTab", version = "0.1.0-SNAPSHOT",
-        url = "https://veroud.com", description = "I did it!", authors = {"Me"})
+        url = "https://veroud.com", description = "Simple Eazy TAB for proxies! By a Aussie...", authors = {"Aidan Heaslip" , "Veroud Division 1"})
 public class ChoEazyTab {
 
     private final ProxyServer server;
     private final Logger logger;
     private final Path dataDirectory;
+    private final Map<UUID, String> playerServerMap = new HashMap<>();
 
     @Inject
     public ChoEazyTab(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
@@ -26,21 +34,54 @@ public class ChoEazyTab {
         this.logger = logger;
         this.dataDirectory = dataDirectory;
 
-        logger.info("MrAteyo was here!");
         logger.info("Loading ChoEazyTab.");
     }
+
     @Subscribe
-    public void onProxyInitialization(ProxyInitializeEvent event) {
-        // Do some operation demanding access to the Velocity API here.
-        // For instance, we could register an event:
-        server.getEventManager().register(this, new ChoEazyTabListener());
+    public void onPlayerJoin(PostLoginEvent event) {
+        Player player = event.getPlayer();
+        playerServerMap.put(player.getUniqueId(), "Unknown");
+        updateTabList();
     }
-    public class ChoEazyTabListener {
 
-        @Subscribe(order = PostOrder.EARLY)
-        public void onPlayerChat(PlayerChatEvent event) {
-            // do something here
+    @Subscribe
+    public void onServerChange(ServerConnectedEvent event) {
+        Player player = event.getPlayer();
+        String serverName = event.getServer().getServerInfo().getName();
+        playerServerMap.put(player.getUniqueId(), serverName);
+        updateTabList();
+    }
+
+    @Subscribe
+    public void onPlayerDisconnect(DisconnectEvent event) {
+        Player player = event.getPlayer();
+        playerServerMap.remove(player.getUniqueId());
+        updateTabList();
+    }
+
+    private void updateTabList() {
+        for (Player player : server.getAllPlayers()) {
+            // Remove all existing entries
+            player.getTabList().getEntries().forEach(entry -> player.getTabList().removeEntry(entry.getProfile().getId()));
+
+            // Rebuild the tab list with updated player data
+            for (UUID uuid : playerServerMap.keySet()) {
+                Optional<Player> optionalPlayer = server.getPlayer(uuid);
+                optionalPlayer.ifPresent(p -> {
+                    String serverName = playerServerMap.getOrDefault(uuid, "Unknown");
+
+                    // Create a new TabListEntry using the builder
+                    TabListEntry entry = TabListEntry.builder()
+                            .tabList(player.getTabList())
+                            .profile(p.getGameProfile())
+                            .displayName(Component.text(p.getUsername() + " §7[" + serverName + "]"))
+                            .latency((int) p.getPing())
+                            .gameMode(3) // Spectator mode for example
+                            .build();
+
+                    player.getTabList().addEntry(entry);
+                });
+            }
         }
-
     }
 }

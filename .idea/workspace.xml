@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3090b74f-6244-4547-8259-7ca7bd04312b" name="Changes" comment="Luckperms compat" />
+    <list default="true" id="3090b74f-6244-4547-8259-7ca7bd04312b" name="Changes" comment="Luckperms compat improved">
+      <change beforePath="D:/ChoEazyTab/.idea/workspace.xml" beforeDir="false" afterPath="D:/ChoEazyTab/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -104,7 +106,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741784439079</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Luckperms compat improved">
+      <option name="closed" value="true" />
+      <created>1741785176800</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1741785176800</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -112,6 +122,7 @@
     <MESSAGE value="made it actually do things yay" />
     <MESSAGE value="I broke it oh no" />
     <MESSAGE value="Luckperms compat" />
-    <option name="LAST_COMMIT_MESSAGE" value="Luckperms compat" />
+    <MESSAGE value="Luckperms compat improved" />
+    <option name="LAST_COMMIT_MESSAGE" value="Luckperms compat improved" />
   </component>
 </project>

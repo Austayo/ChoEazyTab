@@ -16,7 +16,6 @@ import net.kyori.adventure.text.Component;
 import net.luckperms.api.LuckPerms;
 import net.luckperms.api.LuckPermsProvider;
 import net.luckperms.api.cacheddata.CachedMetaData;
-import net.luckperms.api.model.user.UserManager;
 import org.slf4j.Logger;
 
 import java.nio.file.Files;
@@ -24,7 +23,6 @@ import java.nio.file.Path;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -44,11 +42,8 @@ public class ChoEazyTab {
         this.server = server;
         this.logger = logger;
         this.dataDirectory = dataDirectory;
-
         logger.info("Loading ChoEazyTab.");
         loadConfig();
-
-
     }
 
     private void loadConfig() {
@@ -58,17 +53,17 @@ public class ChoEazyTab {
         }
         try (FileConfig config = FileConfig.of(configPath)) {
             config.load();
-            this.luckPermsEnabled = config.contains("modules.luckperms") ? config.get("modules.luckperms") : false;
+            this.luckPermsEnabled = config.getOrElse("modules.luckperms", false);
         } catch (Exception e) {
             logger.error("Failed to load config file!", e);
-            this.luckPermsEnabled = false; // Default to enabled
+            this.luckPermsEnabled = false;
         }
     }
 
     private void createDefaultConfig(Path path) {
         try {
             Files.createDirectories(dataDirectory);
-            Files.writeString(path, "enable_luckperms = true\n");
+            Files.writeString(path, "modules.luckperms = true\n");
         } catch (IOException e) {
             logger.error("Could not create default config!", e);
         }
@@ -77,23 +72,19 @@ public class ChoEazyTab {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         server.getScheduler().buildTask(this, this::updateTabList)
-                .repeat(java.time.Duration.ofSeconds(5)) // Update every 5 seconds
+                .repeat(java.time.Duration.ofSeconds(5))
                 .schedule();
         logger.info("ChoEazyTab initialized successfully!");
         if (luckPermsEnabled && server.getPluginManager().getPlugin("luckperms").isPresent()) {
-            this.luckPerms = LuckPermsProvider.get();
-            logger.info("LuckPerms detected and enabled via config.");
+            try {
+                this.luckPerms = LuckPermsProvider.get();
+                logger.info("LuckPerms detected and enabled via config.");
+            } catch (Exception e) {
+                logger.error("Failed to load LuckPerms API!", e);
+                this.luckPerms = null;
+            }
         } else {
             this.luckPerms = null;
-        }
-    }
-
-    private void updateLatency() {
-        for (Player player : server.getAllPlayers()) {
-            for (TabListEntry entry : player.getTabList().getEntries()) {
-                UUID playerId = entry.getProfile().getId();
-                server.getPlayer(playerId).ifPresent(p -> entry.setLatency((int) p.getPing()));
-            }
         }
     }
 
@@ -114,21 +105,18 @@ public class ChoEazyTab {
 
     @Subscribe
     public void onPlayerDisconnect(DisconnectEvent event) {
-        Player player = event.getPlayer();
-        playerServerMap.remove(player.getUniqueId());
+        playerServerMap.remove(event.getPlayer().getUniqueId());
         updateTabList();
     }
 
     private void updateTabList() {
         logger.info("Updating Tab List for all players...");
         for (Player player : server.getAllPlayers()) {
-            player.getTabList().getEntries().forEach(entry ->
-                    player.getTabList().removeEntry(entry.getProfile().getId())
-            );
+            // Remove all existing entries manually
+            player.getTabList().getEntries().forEach(entry -> player.getTabList().removeEntry(entry.getProfile().getId()));
 
             for (UUID uuid : playerServerMap.keySet()) {
-                Optional<Player> optionalPlayer = server.getPlayer(uuid);
-                optionalPlayer.ifPresent(p -> {
+                server.getPlayer(uuid).ifPresent(p -> {
                     String serverName = playerServerMap.getOrDefault(uuid, "Unknown");
                     getPlayerPrefix(uuid).thenAccept(prefix -> {
                         TabListEntry entry = TabListEntry.builder()
@@ -136,7 +124,6 @@ public class ChoEazyTab {
                                 .profile(p.getGameProfile())
                                 .displayName(Component.text(prefix + p.getUsername() + " §7[" + serverName + "]"))
                                 .latency((int) Math.min(p.getPing(), Integer.MAX_VALUE))
-                                .gameMode(3)
                                 .build();
                         player.getTabList().addEntry(entry);
                     });
@@ -145,16 +132,13 @@ public class ChoEazyTab {
         }
     }
 
+
     private CompletableFuture<String> getPlayerPrefix(UUID uuid) {
         if (!luckPermsEnabled || luckPerms == null) {
-            return CompletableFuture.completedFuture(""); // LuckPerms disabled
+            return CompletableFuture.completedFuture("");
         }
-
-        UserManager userManager = luckPerms.getUserManager();
-        return userManager.loadUser(uuid).thenApply(user -> {
-            if (user == null) {
-                return "";
-            }
+        return luckPerms.getUserManager().loadUser(uuid).thenApply(user -> {
+            if (user == null) return "";
             CachedMetaData metaData = user.getCachedData().getMetaData();
             return metaData.getPrefix() != null ? metaData.getPrefix() : "";
         });

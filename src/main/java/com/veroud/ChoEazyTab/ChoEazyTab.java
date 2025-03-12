@@ -40,7 +40,6 @@ public class ChoEazyTab {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        server.getEventManager().register(this, this);
         logger.info("ChoEazyTab initialized successfully!");
     }
 

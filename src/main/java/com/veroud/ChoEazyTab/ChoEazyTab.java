@@ -36,7 +36,7 @@ public class ChoEazyTab {
     private final Logger logger;
     private final Path dataDirectory;
     private final Map<UUID, String> playerServerMap = new HashMap<>();
-    private final LuckPerms luckPerms;
+    private LuckPerms luckPerms;
     private boolean luckPermsEnabled;
 
     @Inject
@@ -48,12 +48,7 @@ public class ChoEazyTab {
         logger.info("Loading ChoEazyTab.");
         loadConfig();
 
-        if (luckPermsEnabled && server.getPluginManager().getPlugin("luckperms").isPresent()) {
-            this.luckPerms = LuckPermsProvider.get();
-            logger.info("LuckPerms detected and enabled via config.");
-        } else {
-            this.luckPerms = null;
-        }
+
     }
 
     private void loadConfig() {
@@ -81,10 +76,16 @@ public class ChoEazyTab {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
-        server.getScheduler().buildTask(this, this::updateLatency)
-                .repeat(java.time.Duration.ofSeconds(5))
+        server.getScheduler().buildTask(this, this::updateTabList)
+                .repeat(java.time.Duration.ofSeconds(5)) // Update every 5 seconds
                 .schedule();
         logger.info("ChoEazyTab initialized successfully!");
+        if (luckPermsEnabled && server.getPluginManager().getPlugin("luckperms").isPresent()) {
+            this.luckPerms = LuckPermsProvider.get();
+            logger.info("LuckPerms detected and enabled via config.");
+        } else {
+            this.luckPerms = null;
+        }
     }
 
     private void updateLatency() {

@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3090b74f-6244-4547-8259-7ca7bd04312b" name="Changes" comment="I broke it oh no">
-      <change beforePath="D:/ChoEazyTab/.idea/workspace.xml" beforeDir="false" afterPath="D:/ChoEazyTab/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="D:/ChoEazyTab/build.gradle.kts" beforeDir="false" afterPath="D:/ChoEazyTab/build.gradle.kts" afterDir="false" />
-      <change beforePath="D:/ChoEazyTab/src/main/java/com/veroud/ChoEazyTab/ChoEazyTab.java" beforeDir="false" afterPath="D:/ChoEazyTab/src/main/java/com/veroud/ChoEazyTab/ChoEazyTab.java" afterDir="false" />
-    </list>
+    <list default="true" id="3090b74f-6244-4547-8259-7ca7bd04312b" name="Changes" comment="Luckperms compat" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -100,13 +96,22 @@
       <option name="project" value="LOCAL" />
       <updated>1741782509842</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Luckperms compat">
+      <option name="closed" value="true" />
+      <created>1741784439079</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1741784439079</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="added listener" />
     <MESSAGE value="made it actually do things yay" />
     <MESSAGE value="I broke it oh no" />
-    <option name="LAST_COMMIT_MESSAGE" value="I broke it oh no" />
+    <MESSAGE value="Luckperms compat" />
+    <option name="LAST_COMMIT_MESSAGE" value="Luckperms compat" />
   </component>
 </project>

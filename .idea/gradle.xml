@@ -5,6 +5,11 @@
       <GradleProjectSettings>
         <option name="externalProjectPath" value="D:ChoEazyTab" />
         <option name="gradleHome" value="" />
+        <option name="modules">
+          <set>
+            <option value="D:/ChoEazyTab" />
+          </set>
+        </option>
       </GradleProjectSettings>
     </option>
   </component>

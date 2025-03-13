@@ -84,15 +84,19 @@ public class ChoEazyTab {
                 .repeat(java.time.Duration.ofSeconds(5))
                 .schedule();
         logger.info("ChoEazyTab initialized successfully!");
+
         if (luckPermsEnabled && server.getPluginManager().getPlugin("luckperms").isPresent()) {
             try {
                 this.luckPerms = LuckPermsProvider.get();
-                logger.info("LuckPerms detected and enabled via config.");
+                if (this.luckPerms != null) {
+                    logger.info("LuckPerms detected and enabled.");
+                }
             } catch (Exception e) {
-                logger.error("Failed to load LuckPerms API!", e);
+                logger.error("Failed to hook into LuckPerms API!", e);
                 this.luckPerms = null;
             }
         } else {
+            logger.warn("LuckPerms is either disabled in config or not installed.");
             this.luckPerms = null;
         }
     }
@@ -120,36 +124,48 @@ public class ChoEazyTab {
 
     private void updateTabList() {
         logger.info("Updating Tab List for all players...");
+
         for (Player player : server.getAllPlayers()) {
-            // Remove all existing entries manually
-            player.getTabList().getEntries().forEach(entry -> player.getTabList().removeEntry(entry.getProfile().getId()));
+            // Clear existing entries before updating
+            player.getTabList().getEntries().forEach(entry ->
+                    player.getTabList().removeEntry(entry.getProfile().getId()));
 
             for (UUID uuid : playerServerMap.keySet()) {
                 server.getPlayer(uuid).ifPresent(p -> {
                     String serverName = playerServerMap.getOrDefault(uuid, "Unknown");
                     getPlayerPrefix(uuid).thenAccept(prefix -> {
-                        TabListEntry entry = TabListEntry.builder()
-                                .tabList(player.getTabList())
-                                .profile(p.getGameProfile())
-                                .displayName(Component.text(prefix + p.getUsername() + " §7[" + serverName + "]"))
-                                .latency((int) Math.min(p.getPing(), Integer.MAX_VALUE))
-                                .build();
-                        player.getTabList().addEntry(entry);
+                        try {
+                            TabListEntry entry = TabListEntry.builder()
+                                    .tabList(player.getTabList())
+                                    .profile(p.getGameProfile())
+                                    .displayName(Component.text(prefix + p.getUsername() + " §7[" + serverName + "]"))
+                                    .latency((int) Math.min(p.getPing(), Integer.MAX_VALUE))
+                                    .build();
+                            player.getTabList().addEntry(entry);
+                        } catch (Exception e) {
+                            logger.error("Error updating tab list for " + p.getUsername(), e);
+                        }
                     });
                 });
             }
         }
     }
 
-
     private CompletableFuture<String> getPlayerPrefix(UUID uuid) {
         if (!luckPermsEnabled || luckPerms == null) {
             return CompletableFuture.completedFuture("");
         }
+
         return luckPerms.getUserManager().loadUser(uuid).thenApply(user -> {
-            if (user == null) return "";
+            if (user == null) {
+                logger.warn("LuckPerms user data not found for UUID: {}", uuid);
+                return "";
+            }
             CachedMetaData metaData = user.getCachedData().getMetaData();
             return metaData.getPrefix() != null ? metaData.getPrefix() : "";
+        }).exceptionally(e -> {
+            logger.error("Failed to fetch prefix from LuckPerms for UUID: " + uuid, e);
+            return "";
         });
     }
 }

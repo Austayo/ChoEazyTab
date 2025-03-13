@@ -85,12 +85,11 @@ public class ChoEazyTab {
                 .schedule();
         logger.info("ChoEazyTab initialized successfully!");
 
-        if (luckPermsEnabled && server.getPluginManager().getPlugin("luckperms").isPresent()) {
+        // Check if LuckPerms is installed and enabled
+        if (luckPermsEnabled && isLuckPermsInstalled()) {
             try {
                 this.luckPerms = LuckPermsProvider.get();
-                if (this.luckPerms != null) {
-                    logger.info("LuckPerms detected and enabled.");
-                }
+                logger.info("LuckPerms detected and enabled.");
             } catch (Exception e) {
                 logger.error("Failed to hook into LuckPerms API!", e);
                 this.luckPerms = null;
@@ -98,6 +97,20 @@ public class ChoEazyTab {
         } else {
             logger.warn("LuckPerms is either disabled in config or not installed.");
             this.luckPerms = null;
+        }
+    }
+
+    private boolean isLuckPermsInstalled() {
+        return server.getPluginManager().getPlugin("luckperms").isPresent()
+                && classExists();
+    }
+
+    private boolean classExists() {
+        try {
+            Class.forName("net.luckperms.api.LuckPerms");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
         }
     }
 

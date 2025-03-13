@@ -21,7 +21,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     compileOnly("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
     annotationProcessor("com.velocitypowered:velocity-api:3.4.0-SNAPSHOT")
-    implementation("net.luckperms:api:5.4")
+    compileOnly("net.luckperms:api:5.4")
     implementation("com.electronwill.night-config:toml:3.6.6")
 }
 

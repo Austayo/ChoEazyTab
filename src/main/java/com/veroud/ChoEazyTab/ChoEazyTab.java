@@ -7,6 +7,7 @@ import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.connection.DisconnectEvent;
 import com.velocitypowered.api.event.player.ServerConnectedEvent;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.Player;
@@ -26,8 +27,16 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-@Plugin(id = "choeazytab", name = "ChoEazyTab", version = "0.1.0-SNAPSHOT",
-        url = "https://veroud.com", description = "Simple Eazy TAB for proxies! By a Aussie...", authors = {"Aidan Heaslip", "Veroud Division 1"})
+@Plugin(
+        id = "choeazytab",
+        name = "ChoEazyTab",
+        version = "0.2.0-SNAPSHOT",
+        url = "https://veroud.com",
+        description = "Simple Eazy TAB for proxies! By a Aussie...",
+        authors = {"Aidan Heaslip", "Veroud Division 1"},
+        dependencies = {
+                @Dependency(id = "luckperms", optional = true)
+        })
 public class ChoEazyTab {
 
     private final ProxyServer server;

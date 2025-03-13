@@ -72,7 +72,7 @@ public class ChoEazyTab {
     private void createDefaultConfig(Path path) {
         try {
             Files.createDirectories(dataDirectory);
-            Files.writeString(path, "modules.luckperms = true\n");
+            Files.writeString(path, "modules.luckperms = false\n");
         } catch (IOException e) {
             logger.error("Could not create default config!", e);
         }

@@ -5,6 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3090b74f-6244-4547-8259-7ca7bd04312b" name="Changes" comment="Luckperms is being homophobic :(">
+      <change beforePath="D:/ChoEazyTab/.idea/workspace.xml" beforeDir="false" afterPath="D:/ChoEazyTab/.idea/workspace.xml" afterDir="false" />
       <change beforePath="D:/ChoEazyTab/src/main/java/com/veroud/ChoEazyTab/ChoEazyTab.java" beforeDir="false" afterPath="D:/ChoEazyTab/src/main/java/com/veroud/ChoEazyTab/ChoEazyTab.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -147,7 +148,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741832266370</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Luckperms is being homophobic :(">
+      <option name="closed" value="true" />
+      <created>1741832481687</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1741832481687</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">

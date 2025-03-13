@@ -10,6 +10,7 @@ import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.api.plugin.PluginContainer;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.player.TabListEntry;
@@ -22,9 +23,7 @@ import org.slf4j.Logger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 @Plugin(
@@ -85,7 +84,6 @@ public class ChoEazyTab {
                 .schedule();
         logger.info("ChoEazyTab initialized successfully!");
 
-        // Check if LuckPerms is installed and enabled
         if (luckPermsEnabled && isLuckPermsInstalled()) {
             try {
                 this.luckPerms = LuckPermsProvider.get();
@@ -101,8 +99,8 @@ public class ChoEazyTab {
     }
 
     private boolean isLuckPermsInstalled() {
-        return server.getPluginManager().getPlugin("luckperms").isPresent()
-                && classExists();
+        Optional<PluginContainer> plugin = server.getPluginManager().getPlugin("luckperms");
+        return plugin.isPresent() && classExists();
     }
 
     private boolean classExists() {
@@ -136,31 +134,28 @@ public class ChoEazyTab {
     }
 
     private void updateTabList() {
-        logger.info("Updating Tab List for all players...");
+        List<CompletableFuture<TabListEntry>> futureEntries = new ArrayList<>();
 
         for (Player player : server.getAllPlayers()) {
-            // Clear existing entries before updating
-            player.getTabList().getEntries().forEach(entry ->
-                    player.getTabList().removeEntry(entry.getProfile().getId()));
+            player.getTabList().clearAll();
 
             for (UUID uuid : playerServerMap.keySet()) {
                 server.getPlayer(uuid).ifPresent(p -> {
                     String serverName = playerServerMap.getOrDefault(uuid, "Unknown");
-                    getPlayerPrefix(uuid).thenAccept(prefix -> {
-                        try {
-                            TabListEntry entry = TabListEntry.builder()
+                    CompletableFuture<TabListEntry> entryFuture = getPlayerPrefix(uuid).thenApply(prefix ->
+                            TabListEntry.builder()
                                     .tabList(player.getTabList())
                                     .profile(p.getGameProfile())
                                     .displayName(Component.text(prefix + p.getUsername() + " §7[" + serverName + "]"))
                                     .latency((int) Math.min(p.getPing(), Integer.MAX_VALUE))
-                                    .build();
-                            player.getTabList().addEntry(entry);
-                        } catch (Exception e) {
-                            logger.error("Error updating tab list for " + p.getUsername(), e);
-                        }
-                    });
+                                    .build()
+                    );
+                    futureEntries.add(entryFuture);
                 });
             }
+
+            CompletableFuture.allOf(futureEntries.toArray(new CompletableFuture[0]))
+                    .thenRun(() -> futureEntries.forEach(f -> f.thenAccept(player.getTabList()::addEntry)));
         }
     }
 
@@ -175,7 +170,7 @@ public class ChoEazyTab {
                 return "";
             }
             CachedMetaData metaData = user.getCachedData().getMetaData();
-            return metaData.getPrefix() != null ? metaData.getPrefix() : "";
+            return Optional.ofNullable(metaData.getPrefix()).orElse("");
         }).exceptionally(e -> {
             logger.error("Failed to fetch prefix from LuckPerms for UUID: " + uuid, e);
             return "";
